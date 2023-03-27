@@ -12,30 +12,30 @@
 % 11: NM
 [status,msg,msgID] = mkdir('Dataset_time');
 snr = -20:2:20;
-i_train =  1400;
-i_val= 500;
-i_test = 500;
+i_train =  10;
+i_val= 5;
+i_test = 5;
 
-total = length(snr)*8;
+total = length(snr)*11;
 % 
 X_train = zeros(total*i_train,1024,2);
 %Corr_train = zeros(total*i_train,1024,2);
-Y_train = zeros(total*i_train, 8);
+Y_train = zeros(total*i_train, 11);
 lbl_train = zeros(total*i_train, 6);
  
 X_val = zeros(total*i_val,1024,2);
 % Corr_val = zeros(total*i_val,1024,2);
- Y_val = zeros(total*i_val, 8);
+ Y_val = zeros(total*i_val, 11);
 lbl_val = zeros(total*i_val, 6);
 
 X_test = zeros(total*i_test,1024,2);
 %Corr_test = zeros(total*i_test,1024,2);
-Y_test = zeros(total*i_test, 8);
+Y_test = zeros(total*i_test, 11);
 lbl_test = zeros(total*i_test, 6);
 
 l_s = 1024;
 ii = 1;
-for i = 1:11
+for i = 1:8
 cAl = 1;
 j = 1;
 k = 1;
@@ -60,9 +60,9 @@ switch i
         ii = ii+1;
         fprintf('LFM stored\n');
       case 2
-        [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],5,[1/4, 0.3],[],[],[],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
-        [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],5,[1/4, 0.3],[],[],[],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
-        [X3,Y3,lbl3] = signal_generator(snr,i_val,[l_s, l_s],5,[1/4, 0.3],[],[],[],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
+        [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],5,[1/4, 0.3],[0.4, 0.5, 0.6],[],[],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
+        [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],5,[1/4, 0.3],[0.4, 0.5, 0.6],[],[],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
+        [X3,Y3,lbl3] = signal_generator(snr,i_val,[l_s, l_s],5,[1/4, 0.3],[0.4, 0.5, 0.6],[],[],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
       
         fprintf('LFM triang generated\n');
           X_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:,:) = X1;
@@ -79,9 +79,9 @@ switch i
         ii = ii+1;
         fprintf('LFM triang stored\n');
       case 3
-        [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],6,[1/4, 0.3],[],[],[],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
-        [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],6,[1/4, 0.3],[],[],[],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
-        [X3,Y3,lbl3] = signal_generator(snr,i_val,[l_s, l_s],6,[1/4, 0.3],[],[],[],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
+        [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],6,[1/4, 0.3],[],[5, 0.5, 0.25, 0.025],[0.5, 1, 5],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
+        [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],6,[1/4, 0.3],[],[5, 0.5, 0.25, 0.025],[0.5, 1, 5],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
+        [X3,Y3,lbl3] = signal_generator(snr,i_val,[l_s, l_s],6,[1/4, 0.3],[],[5, 0.5, 0.25, 0.025],[0.5, 1, 5],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
       
         fprintf('LFM esc generated\n');
           X_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:,:) = X1;
@@ -172,7 +172,6 @@ switch i
 
             ii = ii+1;
             fprintf('Phase modulation stored\n');
-        end
     case 7
         cAl = 1;
         [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],4,[1/20, 1/4],[],[],[],[1, 2, 5, 10, 15],[1/100, 1/20],j,[20],j,1,cAl,k,[],[],[]);
@@ -192,7 +191,7 @@ switch i
             lbl_test(length(snr)*i_test*(ii-1)+1:length(snr)*i_test*(ii),:) = lbl2;
         ii = ii+1;
         fprintf('NM stored\n');
-	end
+end
 end
 
  fprintf('Beginning to save\n');
