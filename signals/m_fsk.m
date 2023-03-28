@@ -1,7 +1,3 @@
-
-
-
-
 %
 % Genera un pulso de una señal 2^n-FSK a partir de sus características.
 %   Parámetros de entrada:
@@ -57,6 +53,7 @@ function [s,t,cod,error]=m_fsk(fs,fo,Df,ns,numSimbolos,pAl,cAl,cod,n,Tsecuencia,
     
     % Número de frecuencias de la señal M-FSK
     M=2^n;
+    
     % Si los tiempos introducidos son en segundos se pasan a muestras.
     % El número de muestras de la señal de salida se redondea hacia abajo.
     if muestras==0,
@@ -98,6 +95,15 @@ function [s,t,cod,error]=m_fsk(fs,fo,Df,ns,numSimbolos,pAl,cAl,cod,n,Tsecuencia,
         cod=floor((M-1e-12)*rand(1,numSimbolos))-(M-1)/2;
         % Al menos hay 2 transiciones de símbolo (aunque no tienen por qué
         % ser seguidas)
+        while length(find(diff(cod)~=0))<2,
+            cod=floor((M-1e-12)*rand(1,numSimbolos))-(M-1)/2;
+        end
+
+%         c_cod=xcorr(cod,'coeff');
+%         while c_cod(length(cod)-1)>=(1-1.2/(length(cod))),
+%             cod=floor((M-1e-12)*rand(1,numSimbolos))-(M-1)/2;
+%             c_cod=xcorr(cod,'coeff');
+%         end
         codigo=Df*cod;
     else,
         if isempty(cod)||(length(cod)<numSimbolos),
@@ -106,46 +112,72 @@ function [s,t,cod,error]=m_fsk(fs,fo,Df,ns,numSimbolos,pAl,cAl,cod,n,Tsecuencia,
         else,
             if length(cod)>numSimbolos,
                 cod=cod(1:numSimbolos);
-                
             end
-            cod = (cod/pi)-0.5;
             codigo=Df*cod;
         end
     end
-     codigoP=repmat(codigo,ns2,1);
-     frec_smfsk=reshape(codigoP,1,Ttotal);
-
+    
+    % Si el parámetro R está vacío se utiliza una forma de pulso
+    % rectangular. Si se ha introducido algún valor de R en función
+    % del parámetro fl se filtra en raíz cuadrada de coseno alzado,
+    % coseno alzado o pulso gaussiano.
+    
+    if isempty(R),
+        
+        codigoP=repmat(codigo,ns2,1);
+        frec_smfsk=reshape(codigoP,1,Ttotal);
+        
+    else,
+        
+        codigoP=[codigo;zeros(ns2-1,numSimbolos)];
+        codigoP2=reshape(codigoP,1,Ttotal);
+        switch fl
+            case 1,
+                num=rcosine(fs2,fs2*ns2,'sqrt',R);
+            case 2,
+                num=rcosine(fs2,fs2*ns2,'normal',R);
+            case 3,
+                num=gaussfir(R,1,ns2);
+        end
+        num=num/max(num);
+        tran=(length(num)-1)/2;
+        a=filter(num,1,[codigoP2,zeros(1,tran)]);
+        frec_smfsk=a(tran+1:end);
+        
+    end
+       
     % Se obtiene la señal para fs mediante una interpolación lineal
-    Ts2 = 1/fs2;
-    n = 0:fs2:Ttotal-1;
+    
     t2=(0:ns2*numSimbolos-1)/fs2;
     t1=(0:ceil(ns)*numSimbolos-1)/fs;
-    smfsk=interp1(t2,frec_smfsk,t1,'linear','extrap')+fo;
-%     subplot(2,1,1)
-%     plot(smfsk);
-    Am = rand(1);
+    smfsk=interp1(t2,frec_smfsk,t1,'linear','extrap');
+    
     if CP,
-        s=Am*exp(j*2*pi*cumsum(smfsk));
+        s=exp(j*2*pi*cumsum(smfsk));
     else,
-%         length(smfsk)
-%         length(n)
-        s=Am*exp(j*2*pi*smfsk.*n);
+        s=exp(j*2*pi*smfsk.*(0:length(smfsk)-1));
     end
+    
     % Cogemos el número de muestras pedidas
+    
     s=s(1:Tsecuencia);
     Ts=1/fs;
     t=0:Ts:(Tsecuencia-1)*Ts;
+    
     % Normalizamos la potencia
+    
     potS=sum(abs(s).^2)/length(s);
     s=s/sqrt(potS);
+    
     % Lo llevamos a fo
-
+    
+    s=s.*exp(j*2*pi*fo*[0:length(s)-1]);
+    
     % Le damos fase aleatoria si se pide
     
     if pAl==1,
         s=s*exp(j*2*pi*rand(1));
     end
-%     subplot(2,1,2)
-%     plot(t,s)
+    
 end
 

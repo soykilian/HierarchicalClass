@@ -74,7 +74,8 @@ function [s,t,error]=lfm_esc(fs,fo,pAl,T,Tc,Nc,muestras,CP,k,B,Df,ascend)
 
     % Tiempo total ajustado al periodo y nÃºmero de chips
     T2 = Nc*Tc;
-    
+%     display(Nc)
+%     display(T2)
     % Modo Nc, Tc --> T = T2
     if isempty(T),
         T = T2;
@@ -114,13 +115,12 @@ function [s,t,error]=lfm_esc(fs,fo,pAl,T,Tc,Nc,muestras,CP,k,B,Df,ascend)
     else,
         fc=-B/2;
     end
-    
+%     display(Tc)
     % vector de frecuencias
     freq = (fo-fc):(ascend*Df):(fo+fc);
-    freq = repmat(freq,ceil(Tc*fs),1);
-    size(freq)
-    T2*fs
-    freq = reshape(freq,1,T2*fs);
+    freq = repmat(freq,ceil(Tc),1);
+%     display(size(freq))
+    freq = reshape(freq,1,[]);
 
     % se crea la señal LFM escalonada con fase continua si se pide
     if CP,

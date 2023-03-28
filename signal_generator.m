@@ -20,7 +20,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
     
     %Salidas:
     X = zeros(length(SNR)*iteraciones,1024,2);
-    Y = zeros(length(SNR)*iteraciones, 11);
+    Y = zeros(length(SNR)*iteraciones, 13);
     lbl = zeros(length(SNR)*iteraciones, 6);
     
     ik = 1;
@@ -86,8 +86,14 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
  
                     %%% Generar c�digo Costas en FSK
                     codFSK = [];
-                    errorC = 0;
-                    clas_Sig = 4;
+                   switch nFSK_k
+                        case 1
+                            clas_Sig = 4;
+                        case 2
+                            clas_Sig = 5;
+                        case 3
+                            clas_Sig = 6;
+                   end
                     if (cAl == 0)
                        if (~isempty(cod)),
                         len_p = [3,4,5,6];
@@ -100,14 +106,15 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                         [codFSK,errorC]= codigoCostas(len);
                         codFSK = codFSK(1,:);
                         numSimbolos_k=length(codFSK);
-                        T_k = round(numSimbolos_k * ns_k)
-                        clas_Sig = 5;
-                        end
-                    end
-                    if errorC,
+                        T_k = round(numSimbolos_k * ns_k);
+                        clas_Sig = 7;
+                          if errorC,
                         disp('Error al generar el c�digo costas.')
                         return
                     end
+                        end
+                    end
+                  
                     
                     %%%
                    
@@ -141,11 +148,11 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
 %                     roff=[];
                     switch nPSK_k
                         case 1
-                            clas_Sig = 6;
-                        case 2
-                            clas_Sig = 7;
-                        case 3
                             clas_Sig = 8;
+                        case 2
+                            clas_Sig = 9;
+                        case 3
+                            clas_Sig = 10;
                     end
 %          %%% Generar c�digo radar espec�fico en PSK %%
                     errorC = 0;
@@ -162,7 +169,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                                 ns_k=fs/vs_k;
                                 
                                 [codPSK,errorC]=codigoBarker(len);
-                                clas_Sig = 9;
+                                clas_Sig = 11;
                             case 2,
                                len_p = [16, 25, 36, 49, 64];
                                 ran = randsrc(1,1,[1:length(len_p)]);
@@ -172,117 +179,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                                 %ns_k=fs/vs_k;
                                 
                                 [codPSK,errorC]=codigoFrank(len);
-                                clas_Sig = 10;
-                            case 3,
-                                 len_p = [16, 25, 36, 49, 64];
-                                ran = randsrc(1,1,[1:length(len_p)]);
-                                len = len_p(ran);
-                                %vs2 = [1.56, 2.44, 3.51, 4.78, 6.25];
-                                %vs_k=vs2(ran);
-                                %ns_k=fs/vs_k;
-                                
-                                lob_p = [-63,-60,-56];
-                                lob = lob_p(randsrc(1,1,[1:length(lob_p)]));
-                                [codPSK,errorC]=codigoHuffman(len,lob);
-                                clas_Sig = 11;
-                                
-                            case 4,
-                                len_p = [16, 25, 36, 49, 64];
-                                ran = randsrc(1,1,[1:length(len_p)]);
-                                len = len_p(ran);
-                                %vs2 = [1.56, 2.44, 3.51, 4.78, 6.25];
-                                %vs_k=vs2(ran);
-                                %ns_k=fs/vs_k;
-                                
-                                [codPSK,errorC]=codigoP1(len);
-                                clas_Sig = 12;
-                            case 5,
-                                len_p = [16, 36, 64];
-                                ran = randsrc(1,1,[1:length(len_p)]);
-                                len = len_p(ran);
-                                %vs2 = [1.56, 3.51, 6.25];
-                                %vs_k=vs2(ran);
-                                %ns_k=fs/vs_k;
-                                
-                                [codPSK,errorC]=codigoP2(len);
-                                clas_Sig = 13;
-                            case 6,
-                                len_p = [16, 25, 36, 49, 64];
-                                ran = randsrc(1,1,[1:length(len_p)]);
-                                len = len_p(ran);
-                                %vs2 = [1.56, 2.44, 3.51, 4.78, 6.25];
-                                %vs_k=vs2(ran);
-                                %ns_k=fs/vs_k;
-                                
-                                codPSK=codigoP3(len);
-                                clas_Sig = 14;
-                            case 7,
-                                len_p = [16, 25, 36, 49, 64];
-                                ran = randsrc(1,1,[1:length(len_p)]);
-                                len = len_p(ran);
-                                %vs2 = [1.56, 2.44, 3.51, 4.78, 6.25];
-                                %vs_k=vs2(ran);
-                                %ns_k=fs/vs_k;
-                                
-                                codPSK=codigoP4(len,0);
-                                clas_Sig = 15;
-                            case 8,
-                                len_p = [25, 49];
-                                ran = randsrc(1,1,[1:length(len_p)]);
-                                len = len_p(ran);
-                                %vs2 = [1.56, 2.44, 3.51, 4.78, 6.25];
-                                %vs_k=vs2(ran);
-                                %ns_k=fs/vs_k;
-                                
-                                [codPSK,errorC]=codigoPx(len);
-                                clas_Sig = 16;
-                            case 9,
-                                rs = [11,13];
-                                r_c = rs(randsrc(1,1,[1:length(rs)]));
-                                len_p = [16, 25, 36, 49, 64];
-                                ran = randsrc(1,1,[1:length(len_p)]);
-                                len = len_p(ran);
-                                %vs2 = [1.56, 2.44, 3.51, 4.78, 6.25];
-                                %vs_k=vs2(ran);
-                                %ns_k=fs/vs_k;
-                                
-                                [codPSK,errorC]=codigoZadoff_Chu(len,r_c);
-                                clas_Sig = 17;
-                            case 10,
-                                k_p = [4,5,6];
-                                kk = k_p(randsrc(1,1,[1:length(k_p)]));
-                                
-                                T_k = round((T(2)/4 + (T(2) - T(2)/4)*rand(1)))/fs;
-                                T_k=round(T_k*fs);
-                                
-                                [phase, codPSK, t, errorC] = codigoT1(1,T_k/ns_k,1,2,kk);
-                                clas_Sig = 18;
-                            case 11,
-                                k_p = [4,5,6];
-                                kk = k_p(randsrc(1,1,[1:length(k_p)]));
-                                
-                                T_k = round((T(2)/4 + (T(2) - T(2)/4)*rand(1)))/fs;
-                                T_k=round(T_k*fs);
-                                
-                                [phase, codPSK, t, errorC] = codigoT2(1,T_k/ns_k,1,2,kk);
-                                clas_Sig = 19;
-                            case 12,
-                                BWc_k=(BWc(1)+(BWc(2)-BWc(1))*rand(1));
-                                
-                                T_k = round((T(2)/4 + (T(2) - T(2)/4)*rand(1)))/fs;
-                                T_k=round(T_k*fs);
-                                
-                                [phase, codPSK, t, errorC] = codigoT3(1,T_k/ns_k,1,2,BWc_k);
-                                clas_Sig = 20;
-                            case 13,
-                                BWc_k=(BWc(1)+(BWc(2)-BWc(1))*rand(1));
-                                
-                                T_k = round((T(2)/4 + (T(2) - T(2)/4)*rand(1)))/fs;
-                                T_k=round(T_k*fs);
-                                
-                                [phase, codPSK, t, errorC] = codigoT4(1,fo_k,T_k/ns_k,1,2,BWc_k);
-                                clas_Sig = 21;
-                                
+                                clas_Sig = 12;      
                         end
                         
                         T_k=round(ns_k*length(codPSK));
@@ -298,7 +195,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                     
 
                     [x,t,codigo,error]=m_psk(1,fo_k,ns_k,numSimbolos_k,0,cAl,codPSK,nPSK_k,T_k,1,Roff,2);
-                        datosSig(k,i,4)=vs_k;
+                     datosSig(k,i,4)=vs_k;
                     datosSig(k,i,5)=nPSK_k;
                                         
                 case 4, % NM
@@ -306,7 +203,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                     T_k=round(T_k*fs); % Longitud de bloque en muestras
                     
                     x=exp(j*2*pi*(fo_k*(0:T_k-1)+rand(1)));
-                    clas_Sig = 11;
+                    clas_Sig = 13;
 %                     plot(t,x)
                 case 5, % LFM triangular
                     
@@ -348,10 +245,9 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                    Tc_k=Tc_k*fs; %Duraci�n del pulso en muestras
                    Dfc_k=Dfc_k/fs; %Ancho de banda normalizado de la fs
                    BWc_k = Dfc_k * T_k/Tc_k; 
-                    
                    pendiente_k=randsrc(1,1,[1,-1]); 
                     
-                   [x,t,error]=lfm_esc(1,fo_k,pAl,T_k,Tc_k,T_k/Tc_k,1,1,[],BWc_k,[],pendiente_k);
+                   [x,t,error]=lfm_esc(1,fo_k,pAl,T_k,Tc_k, ceil(T_k/Tc_k),1,1,[],BWc_k,[],pendiente_k);
                     clas_Sig = 3;
                 
                 case 7, % MQAM
