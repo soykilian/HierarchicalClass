@@ -66,11 +66,14 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                     cr_k=(BWc_k/T_k)*pendiente_k; %chirp rate
                     
                     [x,t,error]=lfm(1,fo_k,pAl,T_k,1,cr_k);
+%                     figure()
+%                     plot(t,x)
                     datosSig(k,i,5)=pendiente_k;
                     datosSig(k,i,6)=cr_k;
                     clas_Sig = 1;
 %                     plot(t,x)
                 case 2, % MFSK
+                    prop = [1, 1/2];
                     nFSK_k=nFSK(randsrc(1,1,[1:length(nFSK)]));
                     T_k=round(T_k*fs);
                     
@@ -79,7 +82,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                     
                     
                     %Df_k=(Dffsk(1)+(Dffsk(2)-Dffsk(1))*rand(1));
-                    Df_k=1/ns_k;
+                    Df_k=vs_k * prop(randsrc(1,1,[1:length(prop)]));
 %                   Df_k=Dffsk(randsrc(1,1,[1:length(Dffsk)]));
                     numSimbolos_k=ceil(T_k/ns_k);
                     faseContinua=0;
@@ -179,7 +182,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                                 %ns_k=fs/vs_k;
                                 
                                 [codPSK,errorC]=codigoFrank(len);
-                                clas_Sig = 9;      
+                                clas_Sig = 9;     
                         end
                         
                         T_k=round(ns_k*length(codPSK));
