@@ -20,7 +20,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
     
     %Salidas:
     X = zeros(length(SNR)*iteraciones,1024,2);
-    Y = zeros(length(SNR)*iteraciones, 13);
+    Y = zeros(length(SNR)*iteraciones, 10);
     lbl = zeros(length(SNR)*iteraciones, 6);
     
     ik = 1;
@@ -67,10 +67,10 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                     
                     [x,t,error]=lfm(1,fo_k,pAl,T_k,1,cr_k);
                     datosSig(k,i,5)=pendiente_k;
+                    datosSig(k,i,6)=cr_k;
                     clas_Sig = 1;
 %                     plot(t,x)
                 case 2, % MFSK
-                    
                     nFSK_k=nFSK(randsrc(1,1,[1:length(nFSK)]));
                     T_k=round(T_k*fs);
                     
@@ -83,17 +83,17 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
 %                   Df_k=Dffsk(randsrc(1,1,[1:length(Dffsk)]));
                     numSimbolos_k=ceil(T_k/ns_k);
                     faseContinua=0;
- 
+                    clas_Sig = 4;
                     %%% Generar c�digo Costas en FSK
                     codFSK = [];
-                   switch nFSK_k
-                        case 1
-                            clas_Sig = 4;
-                        case 2
-                            clas_Sig = 5;
-                        case 3
-                            clas_Sig = 6;
-                   end
+%                    switch nFSK_k
+%                         case 1
+%                             clas_Sig = 4;
+%                         case 2
+%                             clas_Sig = 5;
+%                         case 3
+%                             clas_Sig = 6;
+%                    end
                     if (cAl == 0)
                        if (~isempty(cod)),
                         len_p = [3,4,5,6];
@@ -107,7 +107,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                         codFSK = codFSK(1,:);
                         numSimbolos_k=length(codFSK);
                         T_k = round(numSimbolos_k * ns_k);
-                        clas_Sig = 7;
+%                         clas_Sig = 7;
                           if errorC,
                         disp('Error al generar el c�digo costas.')
                         return
@@ -121,7 +121,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                     [x,t,codigo,error]=m_fsk(1,fo_k,Df_k,ns_k,numSimbolos_k,pAl,cAl,codFSK,nFSK_k,T_k,1,faseContinua,Roff,1);
                     
                     datosSig(k,i,4)=vs_k;
-                    datosSig(k,i,5)=nFSK_k;
+                    datosSig(k,i,7)=nFSK_k;
                     datosSig(k,i,6)=Df_k;
 %                     subplot(2,1,1)
 %                     plot(t,x)
@@ -137,7 +137,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                 case 3, % MPSK
                     
                     nPSK_k=nPSK(randsrc(1,1,[1:length(nPSK)]));
-                    
+                    len = 0;
                     T_k=round(T_k*fs);
                     
                     vs_k=vsPSK(randsrc(1,1,[1:length(vsPSK)]));
@@ -148,11 +148,11 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
 %                     roff=[];
                     switch nPSK_k
                         case 1
-                            clas_Sig = 8;
+                            clas_Sig = 5;
                         case 2
-                            clas_Sig = 9;
+                            clas_Sig = 6;
                         case 3
-                            clas_Sig = 10;
+                            clas_Sig = 7;
                     end
 %          %%% Generar c�digo radar espec�fico en PSK %%
                     errorC = 0;
@@ -169,7 +169,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                                 ns_k=fs/vs_k;
                                 
                                 [codPSK,errorC]=codigoBarker(len);
-                                clas_Sig = 11;
+                                clas_Sig = 8;
                             case 2,
                                len_p = [16, 25, 36, 49, 64];
                                 ran = randsrc(1,1,[1:length(len_p)]);
@@ -179,7 +179,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                                 %ns_k=fs/vs_k;
                                 
                                 [codPSK,errorC]=codigoFrank(len);
-                                clas_Sig = 12;      
+                                clas_Sig = 9;      
                         end
                         
                         T_k=round(ns_k*length(codPSK));
@@ -197,13 +197,14 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                     [x,t,codigo,error]=m_psk(1,fo_k,ns_k,numSimbolos_k,0,cAl,codPSK,nPSK_k,T_k,1,Roff,2);
                      datosSig(k,i,4)=vs_k;
                     datosSig(k,i,5)=nPSK_k;
+                    datosSig(k,i,6) = len;
                                         
                 case 4, % NM
                     
                     T_k=round(T_k*fs); % Longitud de bloque en muestras
                     
                     x=exp(j*2*pi*(fo_k*(0:T_k-1)+rand(1)));
-                    clas_Sig = 13;
+                    clas_Sig = 10;
 %                     plot(t,x)
                 case 5, % LFM triangular
                     
@@ -234,6 +235,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                     end
                              
                     [x,t,error]=lfm_tr(1,fo_k,pAl,T1_k,T2_k,1,1,cr_k1,cr_k2,BWc_k,[]);
+                    datosSig(k,i,6) = T1_rel_k;
                     clas_Sig = 2;
 %                     plot(t,x)
                 case 6, % LFM esc
@@ -249,6 +251,8 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                     
                    [x,t,error]=lfm_esc(1,fo_k,pAl,T_k,Tc_k, ceil(T_k/Tc_k),1,1,[],BWc_k,[],pendiente_k);
                     clas_Sig = 3;
+                    datosSig(k,i,6) = Tc_k;
+                    datosSig(k,i,4) = Dfc_k;
                 
                 case 7, % MQAM
                     
