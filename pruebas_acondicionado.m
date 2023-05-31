@@ -10,12 +10,12 @@
 % 9: Frank
 % 10: NM
 [status,msg,msgID] = mkdir('Dataset_grouped');
-snr = 18:2:20;
-i_train =  10;
-i_val= 1;
-i_test = 1;
+snr = -10:2:20;
+i_train =  1200;
+i_val= 400;
+i_test = 400;
 
-total = length(snr)*10;
+total = length(snr)*6;
 % 
 X_train = zeros(total*i_train,1024,2);
 Y_train = zeros(total*i_train, 10);
@@ -33,13 +33,13 @@ fm_val = i_val/4;
 fm_test = i_test/4;
 l_s = 1024;
 ii = 1;
-for i = 1:2
+for i = 1:8
 cAl = 1;
 j = 1;
 k = 1;
 switch i
     case 1
-        [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],1,[1/20, 1/4],[],[],[,0.025, 0.05,0.04, 0.1, 1],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
+        [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],1,[1/20, 1/4],[],[],[0.025, 0.05,0.04, 0.1, 1],[1, 2, 5, 10, 15],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
         [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],1,[1/20, 1/4],[],[],[],[0.025, 0.05,0.04, 0.1, 1],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
         [X3,Y3,lbl3] = signal_generator(snr,i_val,[l_s, l_s],1,[1/20, 1/4],[],[],[],[0.025, 0.05,0.04, 0.1, 1],[1/100, 1/20],j,[],j,1,cAl,k,[],[],[]);
       
@@ -181,9 +181,9 @@ j = 1;
     case 6
      cAl = 1;
        
-          [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5,7,9,10,11, 17],[1/100, 1/20],j,[2,5, 10, 15, 20],j,1,cAl,k,[],[],[]);
-            [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5,7,9,10,11,17],[1/100, 1/20],j,[2,5, 10, 15, 20],j,1,cAl,k,[],[],[]);
-            [X3,Y3,lbl3] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5,7,9,10,11,17],[1/100, 1/20],j,[2,5, 10, 15, 20],j,1,cAl,k,[],[],[]);
+          [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],j,[1,3,5,7,9,10,11, 17],j,1,cAl,k,[],[],[]);
+            [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],j,[1,3,5,7,9,10,11,17],j,1,cAl,k,[],[],[]);
+            [X3,Y3,lbl3] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],j,[1,3,5,7,9,10,11,17],j,1,cAl,k,[],[],[]);
             fprintf('BPSK generated\n');
             X_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:,:) = X1;
             Y_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:) = Y1;
@@ -199,9 +199,9 @@ j = 1;
             ii = ii+1;
             fprintf('BPSK stored\n');
             j = j + 1;
-             [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5,7,9,10],[1/100, 1/20],j,[2,5, 10, 15, 20],j,1,cAl,k,[],[],[]);
-            [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5,7,9,10],[1/100, 1/20],j,[2,5, 10, 15, 20],j,1,cAl,k,[],[],[]);
-            [X3,Y3,lbl3] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5,7,9,10],[1/100, 1/20],j,[2,5, 10, 15, 20],j,1,cAl,k,[],[],[]);
+             [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],j,[1,3,5,7,9,10],j,1,cAl,k,[],[],[]);
+            [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],j,[1,3,5,7,9,10],j,1,cAl,k,[],[],[]);
+            [X3,Y3,lbl3] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],j,[1,3,5,7,9,10],j,1,cAl,k,[],[],[]);
             fprintf('QPSK generated\n');
             X_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:,:) = X1;
             Y_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:) = Y1;
@@ -218,9 +218,9 @@ j = 1;
             fprintf('QPSK stored\n');
            
               j = j + 1;
-             [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5],[1/100, 1/20],j,[2,5, 10, 15, 20],j,1,cAl,k,[],[],[]);
-            [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3],[1/100, 1/20],j,[2,5, 10, 15, 20],j,1,cAl,k,[],[],[]);
-            [X3,Y3,lbl3] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3],[1/100, 1/20],j,[2,5, 10, 15, 20],j,1,cAl,k,[],[],[]);
+             [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],j,[1,3,5],j,1,cAl,k,[],[],[]);
+            [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],j,[1,3],j,1,cAl,k,[],[],[]);
+            [X3,Y3,lbl3] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],j,[1,3],j,1,cAl,k,[],[],[]);
             fprintf('8PSK generated\n');
             X_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:,:) = X1;
             Y_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:) = Y1;
@@ -236,9 +236,9 @@ j = 1;
              ii = ii+1;
             fprintf('8PSK stored\n');
         cAl = 0;
-            [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5,7,11,13],[1/100, 1/20],1,[7 10 15 20],1,1,cAl,1,[],[],[]);
-            [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5,7,11,13],[1/100, 1/20],1,[7 10 15 20],j,1,cAl,1,[],[],[]);
-            [X3,Y3,lbl3] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5,7,11,13],[1/100, 1/20],1,[7 10 15 20],j,1,cAl,1,[],[],[]);
+            [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],1,[1,3,5,7,11,13],1,1,cAl,1,[],[],[]);
+            [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],1,[1,3,5,7,11,13],j,1,cAl,1,[],[],[]);
+            [X3,Y3,lbl3] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],1,[1,3,5,7,11,13],j,1,cAl,1,[],[],[]);
             fprintf('Barker modulation generated\n');
             X_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:,:) = X1;
             Y_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:) = Y1;
@@ -256,9 +256,9 @@ j = 1;
             fprintf('Barker modulation stored\n');
     case 7 
         cAl=0;
-            [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5,7,13],[1/100, 1/20],1,[7 10 15 20],1,1,cAl,2,[],[],[]);
-            [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[1,3,5,7,13],[1/100, 1/20],1,[7 10 15 20],2,1,cAl,2,[],[],[]);
-            [X3,Y3,lbl3] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[,3,5,7,13],[1/100, 1/20],1,[7 10 15 20],2,1,cAl,2,[],[],[]);
+            [X1,Y1,lbl1] = signal_generator(snr,i_train,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],1,[1,3,5,7,13],1,1,cAl,2,[],[],[]);
+            [X2,Y2,lbl2] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],1,[1,3,5,7,13],2,1,cAl,2,[],[],[]);
+            [X3,Y3,lbl3] = signal_generator(snr,i_test,[l_s, l_s],3,[1/20, 1/4],[],[],[],[],[1/100, 1/20],1,[1,3,5,7,13],2,1,cAl,2,[],[],[]);
             fprintf('Frank modulation generated\n');
             X_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:,:) = X1;
             Y_train(length(snr)*i_train*(ii-1)+1:length(snr)*i_train*(ii),:) = Y1;

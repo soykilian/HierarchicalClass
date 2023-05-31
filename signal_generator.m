@@ -1,7 +1,7 @@
 
 
 function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,Dfesc,vsFSK,Dffsk,nFSK,vsPSK,nPSK,pAl,cAl,cod,vsASK,vsQAM,Roff)
-    
+                                                    T,rTipoSig,BWc,T1_rel,Tcesc,Dfesc,vsFSK,Df,nFSK,vsPSK,nPSK,pAl,cAl,cod,vsQAM,Roff,M,directorio,nb)
 
     % Crea la carpeta para almacenar los vectores de señal resultantes
     %[status,msg,msgID] = mkdir(directorio);
@@ -11,7 +11,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
     fs = 100;
     
 %     fo=[fs/8,3*fs/8]; % Frecuencia de portadora (MHz)
-    fo = [-fs/4, fs/4]; 
+    fo = [fs/8, fs/4]; 
     
     
     % NLFM
@@ -82,7 +82,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                     
                     
                     %Df_k=(Dffsk(1)+(Dffsk(2)-Dffsk(1))*rand(1));
-                    Df_k=vs_k * prop(randsrc(1,1,[1:length(prop)]));
+                    Df_k=vs_k * prop(randsrc(1,1,[1:length(prop)]))/fs;
 %                   Df_k=Dffsk(randsrc(1,1,[1:length(Dffsk)]));
                     numSimbolos_k=ceil(T_k/ns_k);
                     faseContinua=0;
@@ -126,8 +126,10 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                     datosSig(k,i,4)=vs_k;
                     datosSig(k,i,7)=nFSK_k;
                     datosSig(k,i,6)=Df_k;
+%                     figure()
 %                     subplot(2,1,1)
 %                     plot(t,x)
+%                     title(fo_k);
 %                     subplot(2,1,2);
 %                     [S1,t,f] = tfrstft(x.',1:length(x), 128);
 %                 surf(t,f(1:64),abs(S1(1:64,:)),'edgecolor', 'none')
@@ -167,8 +169,6 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
                                 len_p = [5,7,11,13];
                                 ran = randsrc(1,1,[1:length(len_p)]);
                                 len = len_p(ran);
-                                vs2 = [2, 5, 10, 15, 20];
-                                vs_k=vs2(randsrc(1,1,[1:length(vs2)]));
                                 ns_k=fs/vs_k;
                                 
                                 [codPSK,errorC]=codigoBarker(len);
@@ -287,9 +287,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
             datosSig(k,i,1)=clas_Sig;
             datosSig(k,i,2)=SNR(i);
             datosSig(k,i,3)=T_k;
-            datosSig(k,i,7) = fo_k;
-            
-            
+            datosSig(k,i,7) = fo_k;        
           % Amplitud del ruido
            
            ampR = 1; % Amplitud fija de ruido
@@ -313,6 +311,7 @@ function [X,Y,lbl]=signal_generator(SNR,iteraciones,T,rTipoSig,BWc,T1_rel,Tcesc,
            t2 = linspace(1,length(I),T(2)); 
            I = interp1(t1,I,t2);
            Q = interp1(t1,Q,t2);
+           
            s = I + j*Q;
 %                    subplot(2,1,1)
 %                     plot(0:1:length(s)-1,s)
